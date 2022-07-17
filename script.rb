@@ -24,9 +24,26 @@ class Human < Player
       @@guessed_pegs[i] = gets.chomp.downcase
     end
   end
+
+  def winner?
+    if @@guessed_pegs == @@selected_pegs
+      "Congratulations, you have guessed the peg order correctly and beat the computer!"
+    end
+  end
 end
 
 computer_player = Computer.new
 human_player = Human.new
 computer_player.select_pegs
-human_player.guess_pegs
+
+i = 0
+while i < 12
+  human_player.guess_pegs
+  i+= 1
+  if human_player.winner?
+    p human_player.winner?
+  break
+  else
+    p "Your guessed order is incorrect! you have #{12 - i} tries remaining"
+  end
+end
