@@ -1,6 +1,3 @@
-# computer selects 4 colors out of 6 options and places them in selection order. human has 12 guesses to guess the secret code.
-# human receives feedback detailing whether the color was correct, the color and order were correct, or neither upon each guess.
-require 'pry-byebug'
 class Player
   @@peg_options = %w[red blue purple green pink blank]
   @@selected_pegs = []
@@ -54,8 +51,7 @@ class Computer < Player
 
         if @@selected_pegs[i] == @@guessed_pegs[i]
           p "#{self}'s guess of #{@@guessed_pegs[i]} at position #{i} is correct!"
-          p @@correct_guesses[i] = @@guessed_pegs[i]
-          p @@correct_guesses
+          @@correct_guesses[i] = @@guessed_pegs[i]
         elsif @@selected_pegs.include?(@@guessed_pegs[i])
           p "#{self}'s guess of #{@@guessed_pegs[i]} is included in the the player's selection, but the position #{i} is incorrect."
         else
@@ -66,9 +62,7 @@ class Computer < Player
   end
 
   def play_round
-    if @@computer_role == 'breaker'
-      guess_loop
-    end
+    guess_loop if @@computer_role == 'breaker'
   end
 end
 
@@ -84,22 +78,24 @@ class Human < Player
       end
 
       if @@selected_pegs[i] == @@guessed_pegs[i]
-        p "Your guess of #{@@guessed_pegs[i]} at position #{i} is correct!"
+        p "#{self}'s guess of #{@@guessed_pegs[i]} at position #{i} is correct!"
       elsif @@selected_pegs.include?(@@guessed_pegs[i])
-        p "Your guess of #{@@guessed_pegs[i]} is included in the computer's selection, but the position #{i} is incorrect."
+        p "#{self}'s guess of #{@@guessed_pegs[i]} is included in the computer's selection, but the position #{i} is incorrect."
       else
-        p "your guess of #{@@guessed_pegs[i]} is not included in the computer's selection."
+        p "#{self}'s guess of #{@@guessed_pegs[i]} is not included in the computer's selection."
       end
     end
   end
 
   def select_role
-    p "If you would like to be the code-maker, type 'y' and select enter, otherwise, enter anything else to be the code-breaker"
+    p "If you would like to be the code-maker, type 'y' and select enter, otherwise, enter 'n' to be the code-breaker"
     user_selection = gets.chomp.downcase
     if user_selection == 'y'
       select_pegs
-    else
+    elsif user_selection == 'n'
       @@player_role = 'breaker'
+    else
+      select_role
     end
   end
 
@@ -114,11 +110,9 @@ class Human < Player
       end
     end
   end
-  
-  def play_round  
-    if @@player_role == 'breaker'
-      guess_loop
-    end
+
+  def play_round
+    guess_loop if @@player_role == 'breaker'
   end
 end
 
