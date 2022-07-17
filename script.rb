@@ -30,6 +30,8 @@ class Player
 end
 
 class Computer < Player
+  @@correct_guesses = []
+
   def select_role
     if @@selected_pegs.length == 0
       for i in 0..3
@@ -42,16 +44,23 @@ class Computer < Player
   end
 
   def guess_pegs
-    for i in 0..3
-      computer_guess = @@peg_options.sample
-      @@guessed_pegs[i] = computer_guess
+    if @@correct_guesses.compact.length == 4
+      @@guessed_pegs = @@correct_guesses
+      winner?
+    else
+      for i in 0..3
+        computer_guess = @@peg_options.sample
+        @@guessed_pegs[i] = computer_guess
 
-      if @@selected_pegs[i] == @@guessed_pegs[i]
-        p "#{self}'s guess of #{@@guessed_pegs[i]} at position #{i} is correct!"
-      elsif @@selected_pegs.include?(@@guessed_pegs[i])
-        p "#{self}'s guess of #{@@guessed_pegs[i]} is included in the the player's selection, but the position #{i} is incorrect."
-      else
-        p "#{self}'s guess of #{@@guessed_pegs[i]} is not included in the player's selection."
+        if @@selected_pegs[i] == @@guessed_pegs[i]
+          p "#{self}'s guess of #{@@guessed_pegs[i]} at position #{i} is correct!"
+          p @@correct_guesses[i] = @@guessed_pegs[i]
+          p @@correct_guesses
+        elsif @@selected_pegs.include?(@@guessed_pegs[i])
+          p "#{self}'s guess of #{@@guessed_pegs[i]} is included in the the player's selection, but the position #{i} is incorrect."
+        else
+          p "#{self}'s guess of #{@@guessed_pegs[i]} is not included in the player's selection."
+        end
       end
     end
   end
