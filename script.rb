@@ -5,14 +5,51 @@ class Player
   @@peg_options = %w[red blue purple green pink blank]
   @@selected_pegs = []
   @@guessed_pegs = []
+
+  def winner?
+    if @@guessed_pegs == @@selected_pegs
+      "Congratulations, #{self} has guessed the peg order correctly and beat their opponent!"
+    end
+  end
+
+  def guess_loop
+    i = 0
+    while i < 12
+      guess_pegs
+      i += 1
+      if winner?
+        p winner?
+        break
+      else
+        p "#{self}'s guessed order is incorrect! #{self} has #{12 - i} tries remaining"
+      end
+    end
+  end
 end
 
 class Computer < Player
-  def select_pegs?
+  def select_role
     if @@selected_pegs.length == 0
       for i in 0..3
         color = @@peg_options.sample
         @@selected_pegs.push(color)
+      end
+    else
+      guess_loop
+    end
+  end
+
+  def guess_pegs
+    for i in 0..3
+      computer_guess = @@peg_options.sample
+      @@guessed_pegs[i] = computer_guess
+
+      if @@selected_pegs[i] == @@guessed_pegs[i]
+        p "The computer's guess of #{@@guessed_pegs[i]} at position #{i} is correct!"
+      elsif @@selected_pegs.include?(@@guessed_pegs[i])
+        p "The computer's guess of #{@@guessed_pegs[i]} is included in the the player's selection, but the position #{i} is incorrect."
+      else
+        p "The computer's guess of #{@@guessed_pegs[i]} is not included in the player's selection."
       end
     end
   end
@@ -39,12 +76,6 @@ class Human < Player
   end
   end
 
-  def winner?
-    if @@guessed_pegs == @@selected_pegs
-      'Congratulations, you have guessed the peg order correctly and beat the computer!'
-    end
-  end
-
   def select_role
     p "If you would like to be the code-maker, type 'y' and select enter, otherwise, enter anything else to be the code-breaker"
     user_selection = gets.chomp.downcase
@@ -67,16 +98,4 @@ end
 computer_player = Computer.new
 human_player = Human.new
 human_player.select_role
-computer_player.select_pegs?
-
-i = 0
-while i < 12
-  human_player.guess_pegs
-  i += 1
-  if human_player.winner?
-    p human_player.winner?
-    break
-  else
-    p "Your guessed order is incorrect! you have #{12 - i} tries remaining"
-  end
-end
+computer_player.select_role
