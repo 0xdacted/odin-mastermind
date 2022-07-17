@@ -5,6 +5,8 @@ class Player
   @@peg_options = %w[red blue purple green pink blank]
   @@selected_pegs = []
   @@guessed_pegs = []
+  @@player_role = ''
+  @@computer_role = ''
 
   def winner?
     if @@guessed_pegs == @@selected_pegs
@@ -35,7 +37,7 @@ class Computer < Player
         @@selected_pegs.push(color)
       end
     else
-      guess_loop
+      @@computer_role = 'breaker'
     end
   end
 
@@ -45,12 +47,18 @@ class Computer < Player
       @@guessed_pegs[i] = computer_guess
 
       if @@selected_pegs[i] == @@guessed_pegs[i]
-        p "The computer's guess of #{@@guessed_pegs[i]} at position #{i} is correct!"
+        p "#{self}'s guess of #{@@guessed_pegs[i]} at position #{i} is correct!"
       elsif @@selected_pegs.include?(@@guessed_pegs[i])
-        p "The computer's guess of #{@@guessed_pegs[i]} is included in the the player's selection, but the position #{i} is incorrect."
+        p "#{self}'s guess of #{@@guessed_pegs[i]} is included in the the player's selection, but the position #{i} is incorrect."
       else
-        p "The computer's guess of #{@@guessed_pegs[i]} is not included in the player's selection."
+        p "#{self}'s guess of #{@@guessed_pegs[i]} is not included in the player's selection."
       end
+    end
+  end
+
+  def play_round
+    if @@computer_role == 'breaker'
+      guess_loop
     end
   end
 end
@@ -73,13 +81,17 @@ class Human < Player
       else
         p "your guess of #{@@guessed_pegs[i]} is not included in the computer's selection."
       end
-  end
+    end
   end
 
   def select_role
     p "If you would like to be the code-maker, type 'y' and select enter, otherwise, enter anything else to be the code-breaker"
     user_selection = gets.chomp.downcase
-    select_pegs if user_selection == 'y'
+    if user_selection == 'y'
+      select_pegs
+    else
+      @@player_role = 'breaker'
+    end
   end
 
   def select_pegs
@@ -93,9 +105,19 @@ class Human < Player
       end
     end
   end
+  
+  def play_round  
+    if @@player_role == 'breaker'
+      guess_loop
+    end
+  end
 end
 
 computer_player = Computer.new
 human_player = Human.new
+
 human_player.select_role
 computer_player.select_role
+
+human_player.play_round
+computer_player.play_round
