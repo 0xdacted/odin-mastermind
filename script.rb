@@ -21,7 +21,12 @@ class Human < Player
   def guess_pegs
     for i in 0..3
       p "Given #{@@peg_options}, please input your ##{i} guess"
-      @@guessed_pegs[i] = gets.chomp.downcase
+      user_guess = gets.chomp.downcase 
+      if @@peg_options.include?(user_guess)
+        user_guess = @@guessed_pegs[i]
+      else 
+        self.guess_pegs
+      end
 
       if @@selected_pegs[i] == @@guessed_pegs[i]
         p "Your guess of #{@@guessed_pegs[i]} at position #{i} is correct!"
